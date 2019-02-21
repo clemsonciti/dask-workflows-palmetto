@@ -4,7 +4,7 @@ module load anaconda3/5.1.0
 
 cd
 source deactivate
-conda env remove -n dask_env --all
+conda env remove -n dask_env
 
 # remove IPython profile
 DIR=$(ipython profile locate mpi)
@@ -13,7 +13,7 @@ DIR=$(ipython profile locate mpi)
 sed -i '/setup-dask.sh'
 
 # uninstall kernel
-ipython kernelspec remove dask
+JUPYTER_PATH="" jupyter kernelspec remove dask
 
 # remove start-dask-cluster and stop-dask-cluster
 rm $HOME/bin/start-dask-cluster
