@@ -13,7 +13,7 @@ ipython profile create --parallel --profile=mpi
 echo "c.HubFactory.ip = '*'" >> ~/.ipython/profile_mpi/ipcontroller_config.py
 
 # set up .jhubrc
-echo "module load gcc/5.4.0 openmpi/1.10.3" >> ~/.jhubrc
+echo "module load gcc/5.4.0 openmpi/1.10.3 #setup-dask.sh" >> ~/.jhubrc
 
 # install the kernel for Jupyter notebooks
 python -m ipykernel install --user --name dask --display-name "Dask (Python 3.7)"
@@ -32,3 +32,16 @@ for NODE in `uniq $PBS_NODEFILE`
 do
     ssh $NODE "module load anaconda3 && source activate dask_env && dask-worker --interface=eth0 --nanny-port=8091 --worker-port=8092 --scheduler-file=~/dask-scheduler.json"&
 done' > /home/$USER/bin/start-dask-cluster
+
+echo '#!/usr/bin/env bash
+source ~/.jhubrc
+source activate dask_env
+
+for NODE in `uniq $PBS_NODEFILE
+do
+    ssh $NODE "killall dask-worker"&
+done
+
+sleep 10
+
+killall dask-scheduler' > /home/$USER/bin/stop-dask-cluster
