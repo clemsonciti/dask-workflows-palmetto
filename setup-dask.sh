@@ -33,18 +33,4 @@ do
     ssh $NODE "module load anaconda3 && source activate dask_env && dask-worker --interface=eth0 --nanny-port=8091 --worker-port=8092 --scheduler-file=/home/$USER/dask-scheduler.json"&
 done' > /home/$USER/bin/start-dask-cluster
 
-echo '#!/usr/bin/env bash
-source ~/.jhubrc
-source activate dask_env
-
-for NODE in `uniq $PBS_NODEFILE`
-do
-    ssh $NODE "killall dask-worker"&
-done
-
-sleep 10
-
-killall dask-scheduler' > /home/$USER/bin/stop-dask-cluster
-
 chmod u+x /home/$USER/bin/start-dask-cluster
-chmod u+x /home/$USER/bin/stop-dask-cluster

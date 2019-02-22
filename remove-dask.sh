@@ -17,4 +17,3 @@ JUPYTER_PATH="" jupyter kernelspec remove dask
 
 # remove start-dask-cluster and stop-dask-cluster
 rm $HOME/bin/start-dask-cluster
-rm $HOME/bin/stop-dask-cluster
