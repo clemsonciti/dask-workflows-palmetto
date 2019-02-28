@@ -8,6 +8,8 @@ source activate dask_env
 conda install -y dask dask-ml scikit-learn
 pip install mpi4py matplotlib ipyparallel
 
+pip install git+git://github.com/dask/dask-mpi.git@eb74a110cfc71d47a014458d4e31708e80179de9
+
 # create an IPython profile for ipycluster
 ipython profile create --parallel --profile=mpi
 echo "c.HubFactory.ip = '*'" >> ~/.ipython/profile_mpi/ipcontroller_config.py
@@ -21,16 +23,16 @@ python -m ipykernel install --user --name dask --display-name "Dask (Python 3.7)
 # convenience script for starting a dask cluster
 mkdir -p /home/$USER/bin
 echo '#!/usr/bin/env bash
+module purge
+module load anaconda3/5.1.0
 source ~/.jhubrc
 source activate dask_env
 
-dask-scheduler --port=8088 --interface=eth0 --scheduler-file=/home/$USER/dask-scheduler.json&
+rm -f ~/dask-scheduler.json
+touch ~/dask-scheduler.json
 
-sleep 10
+mkdir -p /scratch2/$USER/dask-workers
 
-for NODE in `uniq $PBS_NODEFILE`
-do
-    ssh $NODE "module load anaconda3 && source activate dask_env && dask-worker --interface=eth0 --nanny-port=8091 --worker-port=8092 --scheduler-file=/home/$USER/dask-scheduler.json"&
-done' > /home/$USER/bin/start-dask-cluster
+mpirun dask-mpi --scheduler-port=8088 --worker-port=8093 --nanny-port=8094 --scheduler-file=/home/$USER/dask-scheduler.json --no-nanny --local-directory /scratch2/$USER/dask-workers --interface=ib0' > /home/$USER/bin/start-dask-cluster
 
 chmod u+x /home/$USER/bin/start-dask-cluster
