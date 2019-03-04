@@ -5,7 +5,7 @@ module load gcc/5.4.0 openmpi/1.10.3 anaconda3/5.1.0
 # set up python environment
 conda create -y -n dask_env python=3.7
 source activate dask_env
-conda install -y dask dask-ml scikit-learn
+conda install -y -c conda-forge dask distributed dask-ml scikit-learn h5py
 pip install mpi4py matplotlib ipyparallel
 
 pip install git+git://github.com/dask/dask-mpi.git@eb74a110cfc71d47a014458d4e31708e80179de9
