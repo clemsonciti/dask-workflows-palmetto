@@ -10,7 +10,7 @@ conda env remove -n dask_env
 DIR=$(ipython profile locate mpi)
 
 # remove any added lines from .jhubrc
-sed -i '/setup-dask.sh'
+sed -i '/setup-dask.sh/d' /home/$USER/.jhubrc
 
 # uninstall kernel
 JUPYTER_PATH="" jupyter kernelspec remove dask
